@@ -1,0 +1,15 @@
+.profile__high-row {
+   display: flex;
+   flex-direction: row;
+   padding: 18px 0 15px 30px;
+   align-items: center;
+   gap: 25px;
+   margin: 0;
+}
+
+@media (max-width: 340px) {
+   .profile__high-row {
+      padding: 26px 0 7px 0;
+      gap: 20px;
+   }
+}

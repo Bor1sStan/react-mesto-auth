@@ -1,0 +1,7 @@
+.elements__row {
+   max-width: 246px;
+   margin: 22px 19px 16px 21px;
+   padding: 0;
+   display: flex;
+   justify-content: space-between;
+}

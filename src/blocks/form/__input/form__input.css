@@ -1,0 +1,21 @@
+.form__input {
+   position: relative;
+   font-style: normal;
+   font-weight: 400;
+   font-size: 14px;
+   line-height: 17px;
+   width: 100%;
+   padding: 0 0 10px;
+   border: none;
+   border-bottom: 1px solid rgba(0, 0, 0, 0.2);
+}
+
+
+/* добавляем плейсхолдеры с префиксами */
+
+.form__input::-ms-input-placeholder, 
+.form__input::-webkit-input-placeholder,
+.form__input::-moz-placeholder, 
+.form__input::-o-input-placeholder {
+   color: rgba(196, 196, 196, 1);
+}

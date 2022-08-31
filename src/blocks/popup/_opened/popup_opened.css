@@ -1,0 +1,6 @@
+.popup_opened {
+   display: flex;
+   transition: opacity 0.3s ease-in-out;
+   opacity: 1;
+   pointer-events: all;
+}

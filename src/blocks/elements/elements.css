@@ -1,0 +1,27 @@
+.elements {
+   max-width: 100%;
+   margin: 0;
+   display: grid;
+   grid-template-columns: repeat(3, 3fr);
+   grid-auto-rows: 361px;
+   row-gap: 20px;
+   column-gap: 17px;
+   justify-items: center;
+   align-items: center;
+
+}
+
+@media (max-width: 940px) {
+   .elements {
+      max-width: 625px;
+      grid-template-columns: repeat(2, 2fr);
+      row-gap: 18px;
+      margin: 0 auto;
+   } 
+} 
+
+@media (max-width: 635px) {
+   .elements {
+      grid-template-columns: 1fr;
+   }
+}

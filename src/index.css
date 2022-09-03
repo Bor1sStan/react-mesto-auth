@@ -6,6 +6,7 @@
 
 @import url(./blocks/header/header.css);
 @import url(./blocks/header/__logo/header__logo.css);
+@import url(./blocks/header/__button/header__button.css);
 
 @import url(./blocks/profile/profile.css);
 @import url(./blocks/profile/__menu/profile__menu.css);
@@ -32,6 +33,7 @@
 
 @import url(./blocks/form/form.css);
 @import url(./blocks/form/__title/form__title.css);
+@import url(./blocks/form/__subtitle/form__subtitle.css);
 @import url(./blocks/form/__field/form__field.css);
 @import url(./blocks/form/__input/form__input.css);
 @import url(./blocks/form/__input/_error-type/form__input_error-type.css);

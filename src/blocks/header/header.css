@@ -2,4 +2,7 @@
    max-width: 882px;
    border-bottom: 1px solid rgba(84, 84, 84, 0.7);
    margin: 0;
+   display: flex;
+   flex-direction: row;
+   justify-content: space-between;
 }

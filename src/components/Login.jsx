@@ -1,43 +1,59 @@
-import React from 'react';
+import React from "react";
+import { Link } from "react-router-dom";
 
-function Login({ onLogin, onEmailChange, onPasswordChange, email, password }) {
+function Login({ onSubmit }) {
+  const [email, setEmail] = React.useState("");
+  const [password, setPassword] = React.useState("");
 
-   return (
-      <form className="form">
-         <h2 className="form__title">
-            Вход
-         </h2>
-         <input 
-            className="form__input"s
+  function handleEmailChange(e) {
+    setEmail(e.target.value);
+  }
+
+  function handlePasswordChange(e) {
+    setPassword(e.target.value);
+  }
+
+  return (
+      <form className="auth-form" onSubmit={onSubmit}>
+        <h2 className="auth-form__title">Вход</h2>
+
+        <label className="auth-form__field" htmlFor="email-input">
+          <input
+            className="auth-form__input"
             required
             name="email"
+            id="email-input"
             placeholder="Email"
             type="email"
             minLength="2"
             maxLength="30"
             value={email}
-            onChange={onEmailChange}
-         />
-         <input 
-            className="form__input"
+            onChange={handleEmailChange}
+          />
+          <span className="auth-form__error email-input-error"></span>
+        </label>
+
+        <label className="auth-form__field" htmlFor="password-input">
+          <input
+            className="auth-form__input"
             required
             name="password"
+            id="password-input"
             placeholder="Пароль"
             type="password"
             minLength="2"
             maxLength="30"
             value={password}
-            onChange={onPasswordChange}
-         />
-         <button
-            className="form__save-button"
-            type="submit"
-            onSubmit={onLogin}
-         >
-            Вход
-         </button>
-      </form>
-   );
-};
+            onChange={handlePasswordChange}
+          />
+          <span className="auth-form__error password-input-error"></span>
+        </label>
 
-export default Login()
+        <button className="auth-form__save-button" type="submit">
+          Войти
+        </button>
+      </form>
+  );
+}
+
+export default Login;

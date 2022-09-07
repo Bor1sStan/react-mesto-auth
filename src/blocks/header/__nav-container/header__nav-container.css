@@ -1,0 +1,8 @@
+.header__nav-container {
+   max-width: 255px;
+   height: 22px;
+   display: flex;
+   flex-direction: row;
+   justify-content: space-between;
+   padding-top: 10px;
+}

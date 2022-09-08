@@ -1,5 +1,11 @@
 import React from "react";
-import { Route, Switch, Redirect, useHistory } from "react-router-dom";
+import {
+  Route,
+  Switch,
+  Redirect,
+  useHistory,
+  useLocation,
+} from "react-router-dom";
 
 import Header from "./Header";
 import Footer from "./Footer";
@@ -14,14 +20,18 @@ import Login from "./Login";
 
 import CurrentUserContext from "../contexts/CurrentUserContext";
 import api from "../utils/api";
-import { auth } from "../utils/auth.js";
+import{ auth }from "../utils/auth";
 
 function App() {
-  const [currentUser, setCurrentUser] = React.useState({});
+  const token = localStorage.getItem("token");
   let history = useHistory();
+  let location = useLocation();
 
-  const [userEmail, setUserEmail] = React.useState("");
-  const [userPassword, setUserPassword] = React.useState("");
+  const [loggedIn, setLoggedIn] = React.useState(false);
+  const [currentUser, setCurrentUser] = React.useState({});
+
+  const [email, setEmail] = React.useState("");
+  const [password, setPassword] = React.useState("");
 
   const [isEditProfilePopupOpen, setIsEditProfilePopupOpen] =
     React.useState(false);
@@ -36,13 +46,16 @@ function App() {
   const [selectedCard, setSelectedCard] = React.useState({});
 
   React.useEffect(() => {
+    if (!loggedIn) {
+      return;
+    }
     Promise.all([api.getUserInfo(), api.getCardList()])
       .then(([userData, cardData]) => {
         setCurrentUser(userData);
         setCards(cardData);
       })
       .catch((err) => console.log(err));
-  }, []);
+  }, [loggedIn]);
 
   function closeAllPopups() {
     setIsEditProfilePopupOpen(false);
@@ -132,16 +145,48 @@ function App() {
       .catch((err) => console.log(err));
   }
 
+  function handleEmailChange(e) {
+    setEmail(e.target.value);
+  }
+
+  function handlePasswordChange(e) {
+    setPassword(e.target.value);
+  }
+
   function handleLoginSubmit(e) {
     e.preventDefault();
 
-    console.log(e.target.value);
+    auth
+      .login(password, email)
+      .then((data) => {
+        if (data) {
+          console.log(data);
+          setPassword("");
+          localStorage.setItem("token", data.token);
+          setLoggedIn(true);
+          // history.push("/");
+        } else {
+          console.log("НЕ ТАК ЛОГИН!");
+        }
+      })
+      .catch((err) => console.log(err));
   }
 
   function handleRegisterSubmit(e) {
     e.preventDefault();
 
-    console.log(e.target.value);
+    auth
+      .regist(password, email)
+      .then((res) => {
+        if (res) {
+          setEmail("");
+          setPassword("");
+          history.push("/sign-in");
+        } else {
+          console.log("НЕ ТАК РЕГИСТР!");
+        }
+      })
+      .catch((err) => console.log(err));
   }
 
   function goHome() {
@@ -150,9 +195,8 @@ function App() {
 
   return (
     <CurrentUserContext.Provider value={currentUser}>
-      
-        <Header />
-        <Switch>
+      <Header />
+      <Switch>
         <Route exact path="/">
           <Main
             onEditProfile={handleEditProfileClick}
@@ -168,7 +212,12 @@ function App() {
         </Route>
 
         <Route path="/sign-in">
-          <Login onSubmit={handleLoginSubmit} />
+          <Login 
+          email={email}
+          password={password}
+          onEmailChange={handleEmailChange}
+          onPasswordChange={handlePasswordChange}
+          onSubmit={handleLoginSubmit} />
         </Route>
 
         <Route path="/sign-up">
@@ -212,6 +261,6 @@ function App() {
       <Footer />
     </CurrentUserContext.Provider>
   );
-};
+}
 
 export default App;

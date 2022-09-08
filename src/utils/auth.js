@@ -1,54 +1,56 @@
-export const BASE_URL = "https://api.nomoreparties.co";
+class Auth {
+  constructor(config) {
+    this.BASE_URL = config.url;
+  }
 
-export function checkError(res) {
-   if(res.ok) {
+  _checkErorr(res) {
+    if (res.ok) {
       return res.json();
-   }
-   return Promise.reject("Ой, ошибочка..." + res.status);
-};
+    }
+    return Promise.reject("Ой! Ошибка " + res.status);
+  }
 
-export const regist = ({ email, password }) => {
-  return fetch(`${BASE_URL}/signup`, {
-    method: "POST",
-    headers: {
-      "Accept": "application/json",
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({
-      email: email,
-      password: password,
-    })
-  })
-  .then((res) => checkError(res))
-};
-
-export const login = ({ email, password }) => {
-  return fetch(`${BASE_URL}/signin`, {
-    method: "POST",
-    headers: {
-      "Accept": "application/json",
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({
-      email: email,
-      password: password,
-    })
-  })
-    .then((res) => checkError(res))
-};
-
-export const checkToken = (token) => {
-   return fetch(`${BASE_URL}/users/me`, {
-      method: "GET",
+  regist = (password, email) => {
+    return fetch(`${this.BASE_URL}/signup`, {
+      method: "POST",
       headers: {
-         "Accept": "application/json",
-         "Content-Type": "application/json",
+        Accept: "application/json",
+        "Content-Type": "application/json",
       },
       body: JSON.stringify({
-         "Accept": "application/json",
-         "Content-Type": "application/json",
-         "Authorization": `Bearer ${token}`,
-      })
-   })
-   .then((res) => checkError(res))
-};
+        password: password,
+        email: email
+      }),
+    }).then(this._checkErorr);
+  };
+
+  login = (password, email) => {
+    return fetch(`${this.BASE_URL}/signin`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        password: password,
+        email: email
+      }),
+    }).then(this._checkErorr);
+  };
+
+  getToken = (token) => {
+    return fetch(`${this.BASE_URL}/users/me`, {
+      method: "GET",
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+    }).then(this._checkErorr);
+  };
+}
+
+export const auth = new Auth({
+  url: "https://api.nomoreparties.co",
+});
+
+// const BASE_URL = "https://api.nomoreparties.co";

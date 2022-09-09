@@ -18,19 +18,13 @@ const HeaderNavContainer = ({ email, onExit, width }) => {
       </Route>
 
       <Route path="/sign-in">
-        <Link
-          className="header__link"
-          to="/sign-up"
-        >
+        <Link className="header__link" to="/sign-up">
           Регистрация
         </Link>
       </Route>
 
       <Route path="/sign-up">
-        <Link
-          className="header__link"
-          to="/sign-in"
-        >
+        <Link className="header__link" to="/sign-in">
           Войти
         </Link>
       </Route>

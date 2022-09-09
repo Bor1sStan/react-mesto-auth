@@ -1,8 +1,10 @@
 import React from "react";
 import { Link, Route } from "react-router-dom";
+
 import logo from "../images/Vector.svg";
 import closeButton from "../images/Close-icon.svg";
 import burger from "../images/Burger.svg";
+
 import HeaderNavContainer from "./HeaderNavContainer";
 
 function Header({ email, loggedIn, onExit }) {
@@ -11,8 +13,11 @@ function Header({ email, loggedIn, onExit }) {
 
   function resize() {
     setWidth(window.innerWidth);
-    if (width < 500) {
+    if (width <= 480) {
       setShowMenu(true);
+    }
+    if (width > 480) {
+      setShowMenu(false)
     }
   }
 
@@ -41,9 +46,15 @@ function Header({ email, loggedIn, onExit }) {
     )}
       <header className="header">
         <img src={logo} alt="Место лого" className="header__logo" />
-        {width <= 580 && loggedIn ? (
+        {width <= 480 && loggedIn ? (
           <img
-            className="header__burger-image"
+            className={"header__burger"}
+            style={{
+                   width: "20px",
+                   height: "20px",
+                   paddingRight: "30px",
+                   paddingTop: "7px"
+            }}
             onClick={menuClick}
             src={showMenu ? closeButton : burger}
             alt={showMenu ? "Закрыть" : "Меню"}

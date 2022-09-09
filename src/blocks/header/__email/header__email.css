@@ -1,5 +1,5 @@
 .header__email {
-   max-width: 255px;
+   width: 100%;
    height: 22px;
    color: #FFFFFF;
    margin: 0;
@@ -9,4 +9,11 @@
    font-weight: 500;
    font-size: 18px;
    line-height: 22px;
+   text-align: center;
+}
+
+@media (max-width: 480px) {
+   .header__email {
+      padding: 12px 0 18px 0px;
+   }
 }

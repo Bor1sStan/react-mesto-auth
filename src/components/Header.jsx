@@ -1,17 +1,62 @@
-import { Link } from "react-router-dom";
+import React from "react";
+import { Link, Route } from "react-router-dom";
 import logo from "../images/Vector.svg";
+import closeButton from "../images/Close-icon.svg";
+import burger from "../images/Burger.svg";
+import HeaderNavContainer from "./HeaderNavContainer";
 
-function Header() {
+function Header({ email, loggedIn, onExit }) {
+  const [width, setWidth] = React.useState(0);
+  const [showMenu, setShowMenu] = React.useState(false);
+
+  function resize() {
+    setWidth(window.innerWidth);
+    if (width < 500) {
+      setShowMenu(true);
+    }
+  }
+
+  function menuClick() {
+    setShowMenu(!showMenu);
+  }
+
+  React.useEffect(() => {
+    window.addEventListener("resize", resize);
+    setWidth(window.innerWidth);
+
+    return() => {
+      window.removeEventListener("resize", resize)
+    }
+  }, [width]);
+
   return (
-    <header className="header">
-      <img src={logo} alt="Место лого" className="header__logo" />
-      <div className="header__nav-container">
-        <p className="header__email">this.email</p>
-        <Link className="header__link" to="/sign-in">
-          Войти
-        </Link>
-      </div>
-    </header>
+    <>
+    {showMenu && loggedIn && (
+      <HeaderNavContainer
+      loggedIn={loggedIn}
+      email={email}
+      onExit={onExit}
+      width={width}
+      />
+    )}
+      <header className="header">
+        <img src={logo} alt="Место лого" className="header__logo" />
+        {width <= 580 && loggedIn ? (
+          <img
+            className="header__burger-image"
+            onClick={menuClick}
+            src={showMenu ? closeButton : burger}
+            alt={showMenu ? "Закрыть" : "Меню"}
+          />
+        ) : (
+          <HeaderNavContainer
+            isLoggedIn={loggedIn}
+            email={email}
+            onExit={onExit}
+          />
+        )}
+      </header>
+    </>
   );
 }
 

@@ -1,17 +1,7 @@
 import React from "react";
 import { Link } from "react-router-dom";
 
-function Register({ onSubmit }) {
-  const [email, setEmail] = React.useState("");
-  const [password, setPassword] = React.useState("");
-
-  function handleEmailChange(e) {
-    setEmail(e.target.value);
-  }
-
-  function handlePasswordChange(e) {
-    setPassword(e.target.value);
-  }
+function Register({ onSubmit, email, password, onEmailChange, onPasswordChange }) {
 
   return (
     <form className="auth-form" onSubmit={onSubmit}>
@@ -28,7 +18,7 @@ function Register({ onSubmit }) {
           minLength="2"
           maxLength="30"
           value={email}
-          onChange={handleEmailChange}
+          onChange={onEmailChange}
         />
         <span className="auth-form__error email-input-error"></span>
       </label>
@@ -44,7 +34,7 @@ function Register({ onSubmit }) {
           minLength="2"
           maxLength="30"
           value={password}
-          onChange={handlePasswordChange}
+          onChange={onPasswordChange}
         />
         <span className="auth-form__error password-input-error"></span>
       </label>

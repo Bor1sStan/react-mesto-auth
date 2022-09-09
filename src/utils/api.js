@@ -5,10 +5,7 @@ class Api {
   }
 
   _checkErorr(res) {
-    if (res.ok) {
-      return res.json();
-    }
-    return Promise.reject("Ошибка" + res.status);
+    return res.ok ? res.json() : Promise.reject("Ошибка" + res.status);
   }
 
   // GET карточки
@@ -16,7 +13,8 @@ class Api {
     return fetch(`${this._url}cards`, {
       method: "GET",
       headers: this._headers,
-    }).then(this._checkErorr);
+    })
+    .then(this._checkErorr);
   }
 
   // POST карточки
@@ -25,7 +23,8 @@ class Api {
       method: "POST",
       headers: this._headers,
       body: JSON.stringify(cardData),
-    }).then(this._checkErorr);
+    })
+    .then(this._checkErorr);
   }
 
   // DELETE карточки / карточкиID
@@ -33,7 +32,8 @@ class Api {
     return fetch(`${this._url}cards/${id}`, {
       method: "DELETE",
       headers: this._headers,
-    }).then(this._checkErorr);
+    })
+    .then(this._checkErorr);
   }
 
   // GET информацию пол-лей
@@ -41,7 +41,8 @@ class Api {
     return fetch(`${this._url}users/me`, {
       method: "GET",
       headers: this._headers,
-    }).then(this._checkErorr);
+    })
+    .then(this._checkErorr);
   }
 
   // PATCH информацию пол-лей
@@ -50,7 +51,8 @@ class Api {
       method: "PATCH",
       headers: this._headers,
       body: JSON.stringify(userData),
-    }).then(this._checkErorr);
+    })
+    .then(this._checkErorr);
   }
 
   // PATCH аватар
@@ -59,7 +61,8 @@ class Api {
       method: "PATCH",
       headers: this._headers,
       body: JSON.stringify(avatar),
-    }).then(this._checkErorr);
+    })
+    .then(this._checkErorr);
   }
 
   // PUT/DELETE  -  поставить/убрать лайк
@@ -73,7 +76,8 @@ class Api {
       return fetch(`${this._url}cards/${id}/likes`, {
         method: "DELETE",
         headers: this._headers,
-      }).then(this._checkErorr);
+      })
+      .then(this._checkErorr);
     }
   }
 

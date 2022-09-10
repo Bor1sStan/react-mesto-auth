@@ -44,7 +44,7 @@ function Register({ onSubmit, email, password, onEmailChange, onPasswordChange }
       </button>
       <p className="auth-form__text">
         Уже зарегистрированы?
-        <Link className="auth-form__link">Войти</Link>
+        <Link to={"/sign-in"} className="auth-form__link">Войти</Link>
       </p>
     </form>
   );

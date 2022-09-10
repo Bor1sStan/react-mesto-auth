@@ -17,6 +17,8 @@ import EditAvatarPopup from "./EditAvatarPopup";
 import EditProfilePopup from "./EditProfilePopup";
 import Register from "./Register";
 import Login from "./Login";
+import { InfoTooltip } from "./InfoTooltip";
+import ProtectedRoute from "./ProtectedRoute";
 
 import { CurrentUserContext } from "../contexts/CurrentUserContext";
 import api from "../utils/api";
@@ -26,6 +28,7 @@ function App() {
   const token = localStorage.getItem("token");
   const history = useHistory();
 
+  const [succses, setSuccses] = React.useState(false);
   const [loggedIn, setLoggedIn] = React.useState(false);
   const [currentUser, setCurrentUser] = React.useState({});
 
@@ -39,6 +42,8 @@ function App() {
   const [isAddPlacePopupOpen, setIsAddPlacePopupOpen] = React.useState(false);
   const [isImagePopupOpen, setIsImagePopupOpen] = React.useState(false);
   const [isDeletePopupOpen, setIsDeletePopupOpen] = React.useState(false);
+  const [isInfoTooltipPopupOpen, setIsInfoTooltipPopupOpen] =
+    React.useState(false);
 
   const [cards, setCards] = React.useState([]);
   const [removedCard, setRemovedCard] = React.useState({});
@@ -46,14 +51,14 @@ function App() {
 
   React.useEffect(() => {
     if (token) {
-    Promise.all([auth.getToken(token), api.getUserInfo(), api.getCardList()])
-      .then(([tokenData, userData, cardData]) => {
-        setEmail(tokenData.data.email)
-        setCurrentUser(userData);
-        setCards(cardData);
-        setLoggedIn(true)
-      })
-      .catch((err) => console.log(err));
+      Promise.all([auth.getToken(token), api.getUserInfo(), api.getCardList()])
+        .then(([tokenData, userData, cardData]) => {
+          setEmail(tokenData.data.email);
+          setCurrentUser(userData);
+          setCards(cardData);
+          setLoggedIn(true);
+        })
+        .catch((err) => console.log(err));
     }
   }, [loggedIn]);
 
@@ -64,6 +69,7 @@ function App() {
     setIsImagePopupOpen(false);
     setSelectedCard({});
     setIsDeletePopupOpen(false);
+    setIsInfoTooltipPopupOpen(false);
   }
 
   function handleEditProfileClick() {
@@ -160,15 +166,22 @@ function App() {
       .regist(password, email)
       .then((res) => {
         if (res) {
-          console.log(res)
+          console.log(res);
           setEmail("");
           setPassword("");
-          history.push("/sign-in");
+          history.push("/login");
+          setSuccses(true);
+          setIsInfoTooltipPopupOpen(true);
         } else {
-          console.log("НЕ ТАК РЕГИСТР!");
+          setSuccses(false);
+          setIsInfoTooltipPopupOpen(true);
+          // console.log("НЕ ТАК РЕГИСТР!");
         }
       })
-      .catch((err) => console.log(err));
+      .catch((err) => console.log(err))
+      .finaly(() => {
+        setIsInfoTooltipPopupOpen(true);
+      });
   }
 
   function handleLoginSubmit(e) {
@@ -183,94 +196,118 @@ function App() {
           localStorage.setItem("token", data.token);
           setLoggedIn(true);
           history.push("/");
+          setIsInfoTooltipPopupOpen(true);
         } else {
-          console.log("НЕ ТАК ЛОГИН!");
+          // console.log("НЕ ТАК ЛОГИН!");
+          setSuccses(false);
+          setIsInfoTooltipPopupOpen(true);
         }
       })
       .catch((err) => console.log(err));
   }
 
   function goHome() {
-    history.push("/");
+    localStorage.removeItem(token);
+    setLoggedIn(false);
+    history.push("/sign-in");
   }
 
   return (
     <CurrentUserContext.Provider value={currentUser}>
-      <Header 
-        email={email}
-        onExit={goHome}
-        loggedIn={loggedIn}
-      />
+      <Header email={email} onExit={goHome} loggedIn={loggedIn} />
       <Switch>
-        <Route exact path="/">
-          <Main
-            onEditProfile={handleEditProfileClick}
-            onEditAvatar={handleEditAvatarClick}
-            onAddPlace={handleAddPlaceClick}
-            onClose={closeAllPopups}
-            cards={cards}
-            onCardClick={handleCardClick}
-            onCardDelete={handleCardDelete}
-            onCardLike={handleCardLike}
-            onCardDeleteClick={handleDeleteCardClick}
-          />
-        </Route>
-
         <Route path="/sign-in">
-          <Login
-            email={email}
-            password={password}
-            onEmailChange={handleEmailChange}
-            onPasswordChange={handlePasswordChange}
-            onSubmit={handleLoginSubmit}
-          />
+          {loggedIn ? (
+            <Redirect to="/" />
+          ) : (
+            <Login
+              email={email}
+              password={password}
+              onEmailChange={handleEmailChange}
+              onPasswordChange={handlePasswordChange}
+              onSubmit={handleLoginSubmit}
+            />
+          )}
         </Route>
 
         <Route path="/sign-up">
-          <Register
-            onSubmit={handleRegisterSubmit}
-            email={email}
-            password={password}
-            onEmailChange={handleEmailChange}
-            onPasswordChange={handlePasswordChange}
-          />
+          {loggedIn ? (
+            <Redirect to="/" />
+          ) : (
+            <Register
+              onSubmit={handleRegisterSubmit}
+              email={email}
+              password={password}
+              onEmailChange={handleEmailChange}
+              onPasswordChange={handlePasswordChange}
+            />
+          )}
+        </Route>
+
+        <ProtectedRoute
+          path="/"
+          loggedIn={loggedIn}
+          component={Main}
+          onEditProfile={handleEditProfileClick}
+          onEditAvatar={handleEditAvatarClick}
+          onAddPlace={handleAddPlaceClick}
+          onClose={closeAllPopups}
+          cards={cards}
+          onCardClick={handleCardClick}
+          onCardDelete={handleCardDelete}
+          onCardLike={handleCardLike}
+          onCardDeleteClick={handleDeleteCardClick}
+        />
+
+        <Route path="*">
+          {loggedIn ? <Redirect to="/" /> : <Redirect to="/sign-in" />}
         </Route>
       </Switch>
+      {loggedIn && (
+        <>
+          <Footer />
+          <ImagePopup
+            name="image"
+            card={selectedCard}
+            isOpen={isImagePopupOpen}
+            onClose={closeAllPopups}
+          />
 
-      <ImagePopup
-        name="image"
-        card={selectedCard}
-        isOpen={isImagePopupOpen}
-        onClose={closeAllPopups}
-      />
+          <EditProfilePopup
+            isOpen={isEditProfilePopupOpen}
+            onClose={closeAllPopups}
+            onUpdateUser={handleUpdateUser}
+          />
 
-      <EditProfilePopup
-        isOpen={isEditProfilePopupOpen}
-        onClose={closeAllPopups}
-        onUpdateUser={handleUpdateUser}
-      />
+          <AddPlacePopup
+            isOpen={isAddPlacePopupOpen}
+            onClose={closeAllPopups}
+            onAddPlace={handleAddPlaceSubmit}
+          />
 
-      <AddPlacePopup
-        isOpen={isAddPlacePopupOpen}
-        onClose={closeAllPopups}
-        onAddPlace={handleAddPlaceSubmit}
-      />
+          <EditAvatarPopup
+            isOpen={isEditAvatarPopupOpen}
+            onClose={closeAllPopups}
+            onUpdateAvatar={handleUpdateAvatar}
+          />
 
-      <EditAvatarPopup
-        isOpen={isEditAvatarPopupOpen}
-        onClose={closeAllPopups}
-        onUpdateAvatar={handleUpdateAvatar}
-      />
-
-      <PopupWithForm
-        name="delete"
-        title="Вы уверены?"
-        isOpen={isDeletePopupOpen}
-        onClose={closeAllPopups}
-        buttonText={"Да"}
-        onSubmit={handleCardDelete}
-      ></PopupWithForm>
-      <Footer />
+          <PopupWithForm
+            name="delete"
+            title="Вы уверены?"
+            isOpen={isDeletePopupOpen}
+            onClose={closeAllPopups}
+            buttonText={"Да"}
+            onSubmit={handleCardDelete}
+          ></PopupWithForm>
+        </>
+      )}
+      {!loggedIn && (
+        <InfoTooltip
+          isOpen={isInfoTooltipPopupOpen}
+          onClose={closeAllPopups}
+          succses={succses}
+        />
+      )}
     </CurrentUserContext.Provider>
   );
 }

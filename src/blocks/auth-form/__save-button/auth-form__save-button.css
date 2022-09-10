@@ -1,11 +1,17 @@
 .auth-form__save-button {
-   height: 50px;
-   font-family: 'Inter';
-   font-style: normal;
-   font-weight: 400;
-   font-size: 18px;
-   line-height: 22px;
-   text-align: center;
-   color: #000000;
-   border-radius: 2px;
+  height: 50px;
+  font-family: "Inter";
+  font-style: normal;
+  font-weight: 400;
+  font-size: 18px;
+  line-height: 22px;
+  text-align: center;
+  color: #000000;
+  border-radius: 2px;
+  cursor: pointer;
+  transition: opacity 0.2s ease-in;
+}
+
+.auth-form__save-button:hover:not([disabled]) {
+  opacity: 0.8;
 }

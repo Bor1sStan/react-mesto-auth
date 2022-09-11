@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import PopupWithForm from "./PopupWithForm";
 
-function AddPlacePopup({ isOpen, onClose, onAddPlace }) {
+function AddPlacePopup({  isOpen, onClose, onAddPlace }) {
   const [name, setName] = useState("");
   const [link, setLink] = useState("");
 
@@ -38,7 +38,7 @@ function AddPlacePopup({ isOpen, onClose, onAddPlace }) {
           placeholder="Название"
           minLength="2"
           maxLength="30"
-          value={name}
+          value={name || ""}
           onChange={(e) => {
             setName(e.target.value);
           }}
@@ -54,7 +54,7 @@ function AddPlacePopup({ isOpen, onClose, onAddPlace }) {
           type="url"
           className="form__input"
           placeholder="Ссылка на картинку"
-          value={link}
+          value={link || ""}
           onChange={(e) => {
             setLink(e.target.value);
           }}

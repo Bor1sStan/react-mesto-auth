@@ -27,7 +27,7 @@ import { auth } from "../utils/auth";
 function App() {
   const token = localStorage.getItem("token");
   const history = useHistory();
-  const location = useLocation();
+  // const location = useLocation();
 
   const [isLoggedIn, setIsLoggedIn] = React.useState(false);
   // const [isLoading, srtIsLoading] = React.useState(false);

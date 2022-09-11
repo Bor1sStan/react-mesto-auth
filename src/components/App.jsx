@@ -27,9 +27,12 @@ import { auth } from "../utils/auth";
 function App() {
   const token = localStorage.getItem("token");
   const history = useHistory();
+  const location = useLocation();
+
+  const [isLoggedIn, setIsLoggedIn] = React.useState(false);
+  // const [isLoading, srtIsLoading] = React.useState(false);
 
   const [succses, setSuccses] = React.useState(false);
-  const [loggedIn, setLoggedIn] = React.useState(false);
   const [currentUser, setCurrentUser] = React.useState({});
 
   const [email, setEmail] = React.useState("");
@@ -49,18 +52,80 @@ function App() {
   const [removedCard, setRemovedCard] = React.useState({});
   const [selectedCard, setSelectedCard] = React.useState({});
 
+  //----------------------------------------------------------
+
   React.useEffect(() => {
-    if (token) {
-      Promise.all([auth.getToken(token), api.getUserInfo(), api.getCardList()])
-        .then(([tokenData, userData, cardData]) => {
-          setEmail(tokenData.data.email);
+    if (isLoggedIn) {
+      Promise.all([api.getUserInfo(), api.getCardList()])
+        .then(([userData, cardData]) => {
           setCurrentUser(userData);
           setCards(cardData);
-          setLoggedIn(true);
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    }
+  }, [isLoggedIn]);
+
+  React.useEffect(() => {
+    checkToken();
+  }, []);
+
+  function checkToken() {
+    if (token) {
+      auth
+        .getToken(token)
+        .then((data) => {
+          setIsLoggedIn(true);
+          setEmail(data.data.email);
+          history.push("/");
         })
         .catch((err) => console.log(err));
     }
-  }, [loggedIn]);
+  }
+
+  //----------------------------------------------
+
+  // React.useEffect(() => {
+  //   setIsLoading(true);
+  //   if (isLoggedIn) {
+  //     Promise.all([api.getUserInfo(), api.getCardList()])
+  //       .then(([userData, cardData]) => {
+  //         setCurrentUser(userData);
+  //         setCards(cardData);
+  //       })
+  //       .catch((err) => {
+  //         console.log(err);
+  //       })
+  //       .finally(() => {
+  //         setIsLoading(false);
+  //       });
+  //   } else {
+  //     setIsLoading(false);
+  //   }
+  // }, [isLoggedIn]);
+
+  // React.useEffect(() => {
+  //   checkToken();
+  // }, []);
+
+  // function checkToken() {
+  //   setIsLoading(true);
+  //   if (token) {
+  //     setIsLoading(true);
+  //     auth
+  //       .getToken(token)
+  //       .then((data) => {
+  //         setIsLoggedIn(true);
+  //         setEmail(data.data.email);
+  //         history.push("/");
+  //       })
+  //       .catch((err) => console.log(err))
+  //       .finally(() => setIsLoading(false));
+  //   } else {
+  //     setIsLoading(false);
+  //   }
+  // }
 
   function closeAllPopups() {
     setIsEditProfilePopupOpen(false);
@@ -169,17 +234,17 @@ function App() {
           console.log(res);
           setEmail("");
           setPassword("");
-          history.push("/login");
+          history.push("/sign-in");
           setSuccses(true);
           setIsInfoTooltipPopupOpen(true);
         } else {
-          setSuccses(false);
+          setSuccses(false)
           setIsInfoTooltipPopupOpen(true);
-          // console.log("НЕ ТАК РЕГИСТР!");
+          console.log("НЕ ТАК РЕГИСТР!");
         }
       })
-      .catch((err) => console.log(err))
-      .finaly(() => {
+      .catch((err) => {
+        console.log(err);
         setIsInfoTooltipPopupOpen(true);
       });
   }
@@ -194,30 +259,32 @@ function App() {
           console.log(data);
           setPassword("");
           localStorage.setItem("token", data.token);
-          setLoggedIn(true);
           history.push("/");
-          setIsInfoTooltipPopupOpen(true);
+          setIsLoggedIn(true);
         } else {
-          // console.log("НЕ ТАК ЛОГИН!");
-          setSuccses(false);
-          setIsInfoTooltipPopupOpen(true);
+          console.log("НЕ ТАК ЛОГИН!");
         }
       })
-      .catch((err) => console.log(err));
+      .catch((err) => {
+        console.log(err);
+        setSuccses(false)
+        setIsInfoTooltipPopupOpen(true);
+      })
   }
 
   function goHome() {
-    localStorage.removeItem(token);
-    setLoggedIn(false);
+    localStorage.removeItem("token");
     history.push("/sign-in");
+    setIsLoggedIn(false);
+    setEmail('');
   }
 
   return (
     <CurrentUserContext.Provider value={currentUser}>
-      <Header email={email} onExit={goHome} loggedIn={loggedIn} />
+      <Header email={email} onExit={goHome} isLoggedIn={isLoggedIn} />
       <Switch>
         <Route path="/sign-in">
-          {loggedIn ? (
+          {isLoggedIn ? (
             <Redirect to="/" />
           ) : (
             <Login
@@ -231,7 +298,7 @@ function App() {
         </Route>
 
         <Route path="/sign-up">
-          {loggedIn ? (
+          {isLoggedIn ? (
             <Redirect to="/" />
           ) : (
             <Register
@@ -246,7 +313,7 @@ function App() {
 
         <ProtectedRoute
           path="/"
-          loggedIn={loggedIn}
+          isLoggedIn={isLoggedIn}
           component={Main}
           onEditProfile={handleEditProfileClick}
           onEditAvatar={handleEditAvatarClick}
@@ -260,10 +327,10 @@ function App() {
         />
 
         <Route path="*">
-          {loggedIn ? <Redirect to="/" /> : <Redirect to="/sign-in" />}
+          {isLoggedIn ? <Redirect to="/" /> : <Redirect to="/sign-in" />}
         </Route>
       </Switch>
-      {loggedIn && (
+      {isLoggedIn && (
         <>
           <Footer />
           <ImagePopup
@@ -301,7 +368,7 @@ function App() {
           ></PopupWithForm>
         </>
       )}
-      {!loggedIn && (
+      {!isLoggedIn && (
         <InfoTooltip
           isOpen={isInfoTooltipPopupOpen}
           onClose={closeAllPopups}

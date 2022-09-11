@@ -1,5 +1,4 @@
 import React from "react";
-import { Link, Route } from "react-router-dom";
 
 import logo from "../images/Vector.svg";
 import closeButton from "../images/Close-icon.svg";
@@ -38,7 +37,7 @@ function Header({ email, loggedIn, onExit }) {
     <>
     {showMenu && loggedIn && (
       <HeaderNavContainer
-      loggedIn={loggedIn}
+      isLoggedIn={loggedIn}
       email={email}
       onExit={onExit}
       width={width}

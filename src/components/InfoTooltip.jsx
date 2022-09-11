@@ -2,7 +2,7 @@ import React from "react";
 import SuccsesIcon from "../images/SuccecIcon.svg";
 import FailIcon from "../images/FailIcon.svg";
 
-export const InfoTooltip = ({ isOpen, onClose, message, succses }) => {
+export const InfoTooltip = ({ isOpen, onClose, succses }) => {
   console.log();
   return (
     <article className={`popup ${isOpen && "popup_opened"}`}>

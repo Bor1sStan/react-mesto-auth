@@ -12,7 +12,7 @@ const HeaderNavContainer = ({ email, onExit, width }) => {
     >
       <Route exact path="/">
         <p className="header__email">{email}</p>
-        <button className="header__link" onClick={onExit}>
+        <button className="header__link"  onClick={onExit}>
           Выйти
         </button>
       </Route>

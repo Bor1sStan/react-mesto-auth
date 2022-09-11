@@ -4,7 +4,6 @@ import {
   Switch,
   Redirect,
   useHistory,
-  useLocation,
 } from "react-router-dom";
 
 import Header from "./Header";
@@ -27,10 +26,8 @@ import { auth } from "../utils/auth";
 function App() {
   const token = localStorage.getItem("token");
   const history = useHistory();
-  // const location = useLocation();
 
   const [isLoggedIn, setIsLoggedIn] = React.useState(false);
-  // const [isLoading, srtIsLoading] = React.useState(false);
 
   const [succses, setSuccses] = React.useState(false);
   const [currentUser, setCurrentUser] = React.useState({});
@@ -51,8 +48,6 @@ function App() {
   const [cards, setCards] = React.useState([]);
   const [removedCard, setRemovedCard] = React.useState({});
   const [selectedCard, setSelectedCard] = React.useState({});
-
-  //----------------------------------------------------------
 
   React.useEffect(() => {
     if (isLoggedIn) {
@@ -83,49 +78,6 @@ function App() {
         .catch((err) => console.log(err));
     }
   }
-
-  //----------------------------------------------
-
-  // React.useEffect(() => {
-  //   setIsLoading(true);
-  //   if (isLoggedIn) {
-  //     Promise.all([api.getUserInfo(), api.getCardList()])
-  //       .then(([userData, cardData]) => {
-  //         setCurrentUser(userData);
-  //         setCards(cardData);
-  //       })
-  //       .catch((err) => {
-  //         console.log(err);
-  //       })
-  //       .finally(() => {
-  //         setIsLoading(false);
-  //       });
-  //   } else {
-  //     setIsLoading(false);
-  //   }
-  // }, [isLoggedIn]);
-
-  // React.useEffect(() => {
-  //   checkToken();
-  // }, []);
-
-  // function checkToken() {
-  //   setIsLoading(true);
-  //   if (token) {
-  //     setIsLoading(true);
-  //     auth
-  //       .getToken(token)
-  //       .then((data) => {
-  //         setIsLoggedIn(true);
-  //         setEmail(data.data.email);
-  //         history.push("/");
-  //       })
-  //       .catch((err) => console.log(err))
-  //       .finally(() => setIsLoading(false));
-  //   } else {
-  //     setIsLoading(false);
-  //   }
-  // }
 
   function closeAllPopups() {
     setIsEditProfilePopupOpen(false);
